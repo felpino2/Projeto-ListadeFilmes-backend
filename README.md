@@ -8,6 +8,7 @@ Para entender a história inteira de [filme] o usuário deverá assistir: [filme
 
 Além disso, ele também poderá avaliar e salvar seus filmes em listas com denominações personalizadas.
 > Lista 1: Filmes que quero assistir
+
 > Lista 2: Filmes favoritos
 
 ## Url base
@@ -49,42 +50,52 @@ Para códigos de status:
 Seguem as endpoints de gerenciamento:
 
 **Home com todos os filmes**
-GET/catalogo 
+> GET/catalogo
+
 Retorna na página inicial todos os filmes que estão no banco de dados no site.
 
 **Receber filme pesquisado**
-POST/catalogo?filme 
+> POST/catalogo?filme
+
 Recebe, em uma pequena aba de busca, o filme que o usuário que está procurando no banco de dados.
 
 **Mostrar filmes que o antecedem**
-GET/catalogo?=f 
+> GET/catalogo?=f 
+
 Ao encontrar o filme, o sistema irá mostrar todos os filmes que devem ser assistidos antes desse para acompanhar a narrativa.
 
 **Criar listas**
-POST/catalogo/listas 
+> POST/catalogo/listas 
+
 Função que cria listas de filmes.
 
 **Colocar filme na lista**
-PUT/catalogo/listas 
+> PUT/catalogo/listas
+
 Função que adiciona os filmes na lista criada pelo usuário.
 
 **Deletar filme da lista**
-DELETE/catalogo/listas 
+> DELETE/catalogo/listas 
+
 Função que deleta o filme da lista desejada.
 
 **Mandar avaliação**
-POST/catalogo/f# 
+> POST/catalogo/f# 
+
 Função que envia ao sistema a avaliação pessoal (em estrelas) de um usuário.
 
 **Mostrar avaliação do usuário**
-GET/catalogo/f# 
+> GET/catalogo/f# 
+
 Função que irá devolver ao usuário sua avaliação pessoal, sempre que o mesmo abrir a página do filme.
 
 **Atualizar avaliação**
-PATCH/catalogo/f# 
+> PATCH/catalogo/f# 
+
 Função que irá modificar a avaliação do usuário, se desejado pelo mesmo.
 
 **Deletar avaliação**
-DELETE/catalogo/f# 
+> DELETE/catalogo/f# 
+
 Função que irá deletar um filme de uma lista desejada.
 
