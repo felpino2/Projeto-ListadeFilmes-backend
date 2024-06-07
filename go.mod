@@ -1,6 +1,6 @@
 module cebola.com
 
-go 1.22.3
+go 1.23
 
 require (
 	github.com/golang/snappy v0.0.1 // indirect
