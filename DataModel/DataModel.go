@@ -1,4 +1,4 @@
-package main
+package DataModel
 
 import (
 	"fmt"
@@ -6,11 +6,11 @@ import (
 )
 
 type Filme struct {
-	Id          int
-	Nome        string
-	Runtime     int
-	NumOrdem    int
-	Description string
+	Id          int    `json:"Id_Filme" bson:"Id_Filme"`
+	Nome        string `json:"Nome_Filme" bson:"Nome_Filme"`
+	Runtime     int    `json:"Runtime_Filme" bson:"Runtime_Filme"`
+	NumOrdem    int    `json:"NumOrdem" bson:"NumOrdem"`
+	Description string `json:"Description" bson:"Description"`
 }
 
 type Rating struct {
@@ -33,7 +33,6 @@ type Lista struct {
 
 // BANCO DE DADOS
 func CreateUser(nome string, senha string) (User, error) {
-
 	id := time.Now().UnixNano()
 	return User{id, nome, senha}, nil
 }
@@ -60,8 +59,4 @@ func UpdateRating(iduser int64, idfilme int, stars int) (Rating, error) {
 		return Rating{}, fmt.Errorf("Estrelas inválidas")
 	}
 	return Rating{idfilme, iduser, stars}, nil
-}
-
-func main() {
-
 }
