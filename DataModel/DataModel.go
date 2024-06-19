@@ -26,37 +26,47 @@ type User struct {
 }
 
 type Lista struct {
+	Id_lista      int64
 	Filmes        []Filme
 	Nome_da_Lista string
 	Id_user       int64
 }
 
-// BANCO DE DADOS
+// CreateUser cria um novo usuário com um nome e senha fornecidos
 func CreateUser(nome string, senha string) (User, error) {
+	// Gera um ID único para o usuário com base no tempo atual em nanossegundos
 	id := time.Now().UnixNano()
+	// Retorna um novo usuário com o ID, nome e senha fornecidos
 	return User{id, nome, senha}, nil
 }
 
-// BANCO DE DADOS
-func SignInUser(nome string, senha string) (User, error) {
-	return User{}, nil
-}
-
-// SEARCH need Banco de DADOS
-
+// CreateLista cria uma nova lista de filmes para um usuário específico
 func CreateLista(iduser int64, nomeList string) (Lista, error) {
-	return Lista{Filmes: []Filme{}, Nome_da_Lista: nomeList, Id_user: iduser}, nil
+	// Gera um ID único para a lista com base no tempo atual em nanossegundos
+	idLista := time.Now().UnixNano()
+	// Cria uma nova lista com o ID gerado, um slice vazio de filmes, o nome da lista e o ID do usuário
+	lista := Lista{Id_lista: idLista, Filmes: []Filme{}, Nome_da_Lista: nomeList, Id_user: iduser}
+	// Salva a lista no mapa global de listas
+	listas[idLista] = lista
+	// Retorna a lista criada
+	return lista, nil
 }
 
+// InsertFilmesLista adiciona um filme a uma lista existente
 func InsertFilmesLista(list Lista, film Filme) Lista {
+	// Adiciona o filme ao slice de filmes da lista
 	list.Filmes = append(list.Filmes, film)
+	// Retorna a lista atualizada
 	return list
 }
 
+// UpdateRating atualiza a avaliação (rating) de um filme por um usuário específico
 func UpdateRating(iduser int64, idfilme int, stars int) (Rating, error) {
-
+	// Verifica se a quantidade de estrelas é válida (entre 0 e 5)
 	if stars < 0 || stars > 5 {
+		// Retorna um erro se o valor for inválido
 		return Rating{}, fmt.Errorf("Estrelas inválidas")
 	}
+	// Retorna o rating atualizado
 	return Rating{idfilme, iduser, stars}, nil
 }
