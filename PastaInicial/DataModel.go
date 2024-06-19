@@ -43,8 +43,14 @@ func SignInUser(nome string, senha string) (User, error) {
 	return User{}, nil
 }
 
+// SEARCH need Banco de DADOS
+
 func CreateLista(iduser int64, nomeList string) (Lista, error) {
 	return Lista{Filmes: []Filme{}, Nome_da_Lista: nomeList, Id_user: iduser}, nil
+}
+
+func InsertFilmesLista(list Lista, film Filme) Lista {
+	return Lista{Filmes: []Filme{, film.Description, film.Nome, film.NumOrdem, , film.}}
 }
 
 func UpdateRating(iduser int64, idfilme int, stars int) (Rating, error) {
