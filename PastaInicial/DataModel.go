@@ -50,7 +50,8 @@ func CreateLista(iduser int64, nomeList string) (Lista, error) {
 }
 
 func InsertFilmesLista(list Lista, film Filme) Lista {
-	return Lista{Filmes: []Filme{, film.Description, film.Nome, film.NumOrdem, , film.}}
+	list.Filmes = append(list.Filmes, film)
+	return list
 }
 
 func UpdateRating(iduser int64, idfilme int, stars int) (Rating, error) {
@@ -62,8 +63,5 @@ func UpdateRating(iduser int64, idfilme int, stars int) (Rating, error) {
 }
 
 func main() {
-	nome := "juleano"
-	senha := "12232"
 
-	fmt.Print(CreateUser(nome, senha))
 }
