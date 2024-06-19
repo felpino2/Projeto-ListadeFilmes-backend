@@ -1,6 +1,9 @@
 package main
 
-func main() {
+import (
+	HTTP "awesomeProject/psbackllfa/HTTP"
+)
 
-	RunService()
+func main() {
+	HTTP.RunService()
 }
