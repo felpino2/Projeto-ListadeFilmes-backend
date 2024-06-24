@@ -9,7 +9,7 @@ func IniciarMongo() (client *mongo.Client) {
 	log.Println("Server is starting...")
 
 	// Define a URI de conexão com o MongoDB Atlas.
-	uri := "mongodb+srv://felipe:1234@furz-parfum.jwzwsza.mongodb.net/mydatabase?retryWrites=true&w=majority&ssl=true"
+	uri := "mongodb+srv://<username>:<password>@<cluster-url>/<database>?retryWrites=true&w=majority&ssl=true"
 
 	// Chama a função ConectarMongo passando a URI e captura o cliente MongoDB e qualquer erro retornado.
 	client, err := ConectarMongo(uri)
