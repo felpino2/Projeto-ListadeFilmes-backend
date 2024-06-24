@@ -1,28 +1,16 @@
 package main
 
 import (
+	"awesomeProject/psbackllfa/src/database"
+	"awesomeProject/psbackllfa/src/requests"
 	//pacote CORS -> permite requisições de diferentes origens (ajuda na implementação do frontend)
 	"github.com/rs/cors"
 	"log"
 	"net/http"
-	"ps-backend-felipe-rodrigues/src/database"
-	"ps-backend-felipe-rodrigues/src/requests"
 )
 
 func main() {
-	log.Println("Server is starting...")
-
-	// Define a URI de conexão com o MongoDB Atlas
-	uri := "mongodb+srv://felipe:1234@furz-parfum.jwzwsza.mongodb.net/mydatabase?retryWrites=true&w=majority&ssl=true"
-
-	// Chama a função ConectarMongo passando a URI e captura o cliente MongoDB e qualquer erro retornado
-	client, err := database.ConectarMongo(uri)
-	if err != nil {
-		log.Fatalf("Failed to connect to MongoDB: %v", err)
-	}
-
-	// Define o cliente MongoDB globalmente
-	database.Client = client
+	database.IniciarMongo()
 
 	// Middleware CORS
 	corsHandler := cors.Default().Handler

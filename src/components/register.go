@@ -1,10 +1,10 @@
 package components
 
 import (
+	"awesomeProject/psbackllfa/src/database"
 	"context"
 	"encoding/json"
 	"net/http"
-	"ps-backend-felipe-rodrigues/src/database"
 )
 
 type User struct {

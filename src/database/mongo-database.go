@@ -34,5 +34,5 @@ func ConectarMongo(uri string) (*mongo.Client, error) {
 // no banco de dados "users" usando o cliente MongoDB global.
 func GetUserCollection() *mongo.Collection {
 	// Acessa o banco de dados "users" e retorna a coleção "user_profiles".
-	return Client.Database("users").Collection("user_profiles")
+	return Client.Database("userDB").Collection("user_profiles")
 }

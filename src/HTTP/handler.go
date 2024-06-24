@@ -10,7 +10,6 @@ import (
 
 // Função para criar um novo usuário
 func CreateUserHandler(res http.ResponseWriter, req *http.Request) {
-	// Verifica se o método HTTP é POST
 	if req.Method == "POST" {
 		var user DataModel.User
 
