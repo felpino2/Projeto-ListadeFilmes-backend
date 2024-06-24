@@ -1,8 +1,8 @@
 package main
 
 import (
-	"awesomeProject/psbackllfa/src/database"
-	"awesomeProject/psbackllfa/src/requests"
+	"psbackllfa/src/database"
+	"psbackllfa/src/requests"
 	//pacote CORS -> permite requisições de diferentes origens (ajuda na implementação do frontend)
 	"github.com/rs/cors"
 	"log"

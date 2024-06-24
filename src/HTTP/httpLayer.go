@@ -26,7 +26,8 @@ type Router struct{}
 
 // Mapeia os caminhos das URLs para suas respectivas funções de manipulação
 var routeHandlers = map[string]func(http.ResponseWriter, *http.Request){
-	"/create_user":       CreateUserHandler,   // Rota para criar um usuário
+	"/register":          CreateUserHandler,   // Rota para criar um usuário
+	"/login":             LoginUserHandler,    // Rota para criar um usuário
 	"/create_lista":      CreateListaHandler,  // Rota para criar uma lista
 	"/lista_updater/id:": insertFilmeHandler,  // Rota para inserir um filme em uma lista
 	"/update_rating":     updateRatingHandler, // Rota para atualizar a avaliação de um filme

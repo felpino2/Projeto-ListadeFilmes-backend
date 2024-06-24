@@ -1,7 +1,11 @@
 package DataModel
 
 import (
+	"context"
 	"fmt"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"time"
 )
 
@@ -20,9 +24,9 @@ type Rating struct {
 }
 
 type User struct {
-	Id_User int64
-	Nome    string
-	Senha   string
+	Id_User primitive.ObjectID `bson:"_id,omitempty" json:"id_user"`
+	Nome    string             `bson:"nome" json:"nome"`
+	Senha   string             `bson:"senha" json:"senha"`
 }
 
 type Lista struct {
@@ -32,7 +36,6 @@ type Lista struct {
 	Id_user       int64
 }
 
-/*
 // CreateUser cria um novo usuário com um nome e senha fornecidos e insere no MongoDB
 func CreateUser(client *mongo.Client, nome string, senha string) (User, error) {
 	// Gera um ObjectID para o novo usuário
@@ -40,9 +43,9 @@ func CreateUser(client *mongo.Client, nome string, senha string) (User, error) {
 
 	// Cria o novo usuário
 	user := User{
-		ID:    id,
-		Nome:  nome,
-		Senha: senha,
+		Id_User: id,
+		Nome:    nome,
+		Senha:   senha,
 	}
 
 	// Obtém a coleção de usuários
@@ -57,7 +60,26 @@ func CreateUser(client *mongo.Client, nome string, senha string) (User, error) {
 	// Retorna o usuário criado
 	return user, nil
 }
-*/
+
+// LoginUser verifica as credenciais do usuário e retorna o usuário se for bem-sucedido
+func LoginUser(client *mongo.Client, nome string, senha string) (User, error) {
+	var user User
+
+	// Obtém a coleção de usuários
+	collection := client.Database("userdb").Collection("users")
+
+	// Cria um filtro para verificar as credenciais
+	filter := bson.M{"nome": nome, "senha": senha}
+
+	// Procura pelo usuário no banco de dados
+	err := collection.FindOne(context.TODO(), filter).Decode(&user)
+	if err != nil {
+		return User{}, err
+	}
+
+	// Retorna o usuário encontrado
+	return user, nil
+}
 
 // CreateLista cria uma nova lista de filmes para um usuário específico
 func CreateLista(iduser int64, nomeList string) (Lista, error) {

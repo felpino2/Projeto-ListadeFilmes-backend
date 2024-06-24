@@ -1,12 +1,15 @@
 package HTTP
 
 import (
-	"awesomeProject/psbackllfa/src/DataModel"
 	"encoding/json" // Importa o pacote para trabalhar com JSON
-	"net/http"      // Importa o pacote para trabalhar com HTTP
-	"strconv"       // Importa o pacote para conversões de strings para números
-	"strings"       // Importa o pacote para manipulações de strings
+	"go.mongodb.org/mongo-driver/mongo"
+	"net/http" // Importa o pacote para trabalhar com HTTP
+	"psbackllfa/src/DataModel"
+	"strconv" // Importa o pacote para conversões de strings para números
+	"strings" // Importa o pacote para manipulações de strings
 )
+
+var client *mongo.Client
 
 // Função para criar um novo usuário
 func CreateUserHandler(res http.ResponseWriter, req *http.Request) {
@@ -22,17 +25,49 @@ func CreateUserHandler(res http.ResponseWriter, req *http.Request) {
 		}
 
 		// Chama a função para criar um novo usuário
-		novoUser, err := DataModel.CreateUser(user.Nome, user.Senha)
+		novoUser, err := DataModel.CreateUser(client, user.Nome, user.Senha)
 		if err != nil {
 			// Retorna um erro 500 (Internal Server Error) se a criação do usuário falhar
 			http.Error(res, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		// Codifica o novo usuário como JSON e escreve na resposta
+
+		// Define o status HTTP como 201 (Created) e codifica o novo usuário como JSON na resposta
+		res.WriteHeader(http.StatusCreated)
 		json.NewEncoder(res).Encode(novoUser)
 	} else {
 		// Retorna um erro 405 (Method Not Allowed) se o método HTTP não for POST
-		http.Error(res, "Metodo nao funciona", http.StatusMethodNotAllowed)
+		http.Error(res, "Metodo nao permitido", http.StatusMethodNotAllowed)
+	}
+}
+
+// Função para login de um usuário
+func LoginUserHandler(res http.ResponseWriter, req *http.Request) {
+	if req.Method == "POST" {
+		var user DataModel.User
+
+		// Decodifica o corpo da requisição JSON para a struct User
+		err := json.NewDecoder(req.Body).Decode(&user)
+		if err != nil {
+			// Retorna um erro 400 (Bad Request) se a decodificação falhar
+			http.Error(res, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		// Chama a função para verificar as credenciais do usuário
+		loggedInUser, err := DataModel.LoginUser(client, user.Nome, user.Senha)
+		if err != nil {
+			// Retorna um erro 401 (Unauthorized) se as credenciais estiverem incorretas
+			http.Error(res, "Nome ou senha incorretos", http.StatusUnauthorized)
+			return
+		}
+
+		// Define o status HTTP como 200 (OK) e codifica o usuário logado como JSON na resposta
+		res.WriteHeader(http.StatusOK)
+		json.NewEncoder(res).Encode(loggedInUser)
+	} else {
+		// Retorna um erro 405 (Method Not Allowed) se o método HTTP não for POST
+		http.Error(res, "Metodo nao permitido", http.StatusMethodNotAllowed)
 	}
 }
 
