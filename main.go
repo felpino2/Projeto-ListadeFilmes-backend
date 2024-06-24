@@ -1,7 +1,7 @@
 package main
 
 import (
-	HTTP "awesomeProject/psbackllfa/HTTP"
+	"awesomeProject/psbackllfa/src/HTTP"
 )
 
 func main() {

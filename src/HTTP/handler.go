@@ -1,18 +1,18 @@
 package HTTP
 
 import (
-	DM "awesomeProject/psbackllfa/DataModel" // Importa o pacote DataModel como DM
-	"encoding/json"                          // Importa o pacote para trabalhar com JSON
-	"net/http"                               // Importa o pacote para trabalhar com HTTP
-	"strconv"                                // Importa o pacote para conversões de strings para números
-	"strings"                                // Importa o pacote para manipulações de strings
+	"awesomeProject/psbackllfa/src/DataModel"
+	"encoding/json" // Importa o pacote para trabalhar com JSON
+	"net/http"      // Importa o pacote para trabalhar com HTTP
+	"strconv"       // Importa o pacote para conversões de strings para números
+	"strings"       // Importa o pacote para manipulações de strings
 )
 
 // Função para criar um novo usuário
 func CreateUserHandler(res http.ResponseWriter, req *http.Request) {
 	// Verifica se o método HTTP é POST
 	if req.Method == "POST" {
-		var user DM.User
+		var user DataModel.User
 
 		// Decodifica o corpo da requisição JSON para a struct User
 		err := json.NewDecoder(req.Body).Decode(&user)
@@ -23,7 +23,7 @@ func CreateUserHandler(res http.ResponseWriter, req *http.Request) {
 		}
 
 		// Chama a função para criar um novo usuário
-		novoUser, err := DM.CreateUser(user.Nome, user.Senha)
+		novoUser, err := DataModel.CreateUser(user.Nome, user.Senha)
 		if err != nil {
 			// Retorna um erro 500 (Internal Server Error) se a criação do usuário falhar
 			http.Error(res, err.Error(), http.StatusInternalServerError)
@@ -41,7 +41,7 @@ func CreateUserHandler(res http.ResponseWriter, req *http.Request) {
 func CreateListaHandler(res http.ResponseWriter, req *http.Request) {
 	// Verifica se o método HTTP é POST
 	if req.Method == "POST" {
-		var list DM.Lista
+		var list DataModel.Lista
 
 		// Decodifica o corpo da requisição JSON para a struct Lista
 		err := json.NewDecoder(req.Body).Decode(&list)
@@ -52,7 +52,7 @@ func CreateListaHandler(res http.ResponseWriter, req *http.Request) {
 		}
 
 		// Chama a função para criar uma nova lista
-		novaLista, err := DM.CreateLista(list.Id_user, list.Nome_da_Lista)
+		novaLista, err := DataModel.CreateLista(list.Id_user, list.Nome_da_Lista)
 		if err != nil {
 			// Retorna um erro 500 (Internal Server Error) se a criação da lista falhar
 			http.Error(res, err.Error(), http.StatusInternalServerError)
@@ -80,7 +80,7 @@ func insertFilmeHandler(res http.ResponseWriter, req *http.Request) {
 		}
 
 		var requestData struct {
-			Filme DM.Filme
+			Filme DataModel.Filme
 		}
 		// Decodifica o corpo da requisição JSON para a struct Filme
 		err = json.NewDecoder(req.Body).Decode(&requestData)
@@ -91,7 +91,7 @@ func insertFilmeHandler(res http.ResponseWriter, req *http.Request) {
 		}
 
 		// Busca a lista existente pelo ID
-		lista, exists := DM.GetListaByID(listaID)
+		lista, exists := DataModel.GetListaByID(listaID)
 		if !exists {
 			// Retorna um erro 404 (Not Found) se a lista não for encontrada
 			http.Error(res, "Lista not found", http.StatusNotFound)
@@ -99,10 +99,10 @@ func insertFilmeHandler(res http.ResponseWriter, req *http.Request) {
 		}
 
 		// Atualiza a lista com o novo filme
-		updatedLista := DM.InsertFilmesLista(lista, requestData.Filme)
+		updatedLista := DataModel.InsertFilmesLista(lista, requestData.Filme)
 
 		// Salva a lista atualizada
-		DM.SaveLista(updatedLista)
+		DataModel.SaveLista(updatedLista)
 
 		// Retorna a lista atualizada como JSON
 		res.Header().Set("Content-Type", "application/json")
@@ -117,7 +117,7 @@ func insertFilmeHandler(res http.ResponseWriter, req *http.Request) {
 func updateRatingHandler(res http.ResponseWriter, req *http.Request) {
 	// Verifica se o método HTTP é POST
 	if req.Method == "POST" {
-		var rating DM.Rating
+		var rating DataModel.Rating
 		// Decodifica o corpo da requisição JSON para a struct Rating
 		err := json.NewDecoder(req.Body).Decode(&rating)
 		if err != nil {
@@ -126,7 +126,7 @@ func updateRatingHandler(res http.ResponseWriter, req *http.Request) {
 			return
 		}
 		// Chama a função para atualizar a avaliação do filme
-		updatedRating, err := DM.UpdateRating(rating.Id_User, rating.Id_Filme, rating.Stars)
+		updatedRating, err := DataModel.UpdateRating(rating.Id_User, rating.Id_Filme, rating.Stars)
 		if err != nil {
 			// Retorna um erro 500 (Internal Server Error) se a atualização da avaliação falhar
 			http.Error(res, err.Error(), http.StatusInternalServerError)
