@@ -32,13 +32,32 @@ type Lista struct {
 	Id_user       int64
 }
 
-// CreateUser cria um novo usuário com um nome e senha fornecidos
-func CreateUser(nome string, senha string) (User, error) {
-	// Gera um ID único para o usuário com base no tempo atual em nanossegundos
-	id := time.Now().UnixNano()
-	// Retorna um novo usuário com o ID, nome e senha fornecidos
-	return User{id, nome, senha}, nil
+/*
+// CreateUser cria um novo usuário com um nome e senha fornecidos e insere no MongoDB
+func CreateUser(client *mongo.Client, nome string, senha string) (User, error) {
+	// Gera um ObjectID para o novo usuário
+	id := primitive.NewObjectID()
+
+	// Cria o novo usuário
+	user := User{
+		ID:    id,
+		Nome:  nome,
+		Senha: senha,
+	}
+
+	// Obtém a coleção de usuários
+	collection := client.Database("userdb").Collection("users")
+
+	// Insere o novo usuário na coleção
+	_, err := collection.InsertOne(context.TODO(), user)
+	if err != nil {
+		return User{}, err
+	}
+
+	// Retorna o usuário criado
+	return user, nil
 }
+*/
 
 // CreateLista cria uma nova lista de filmes para um usuário específico
 func CreateLista(iduser int64, nomeList string) (Lista, error) {

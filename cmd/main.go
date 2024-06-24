@@ -34,9 +34,3 @@ func main() {
 	log.Println("Servidor iniciado na porta 8080")
 	log.Fatal(http.ListenAndServe(":8080", corsHandler(http.DefaultServeMux)))
 }
-
-/*user := components.User{
-	Name:        "Felipe Queiroz",
-	DisplayName: "FelipePirocade2cm",
-	Password:    "peidofrouxoquenemfazbarulhomasfede123",
-}*/
