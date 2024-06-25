@@ -6,12 +6,12 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"ps-backend-felipe-rodrigues/src/components"
+	"psbackllfa/src/DataModel"
 )
 
 // Função para lidar com requisições de login de usuários
 func LoginUserHandler(w http.ResponseWriter, r *http.Request) {
-	var user components.User
+	var user DataModel.User
 
 	// Decodifica o corpo da requisição JSON e armazena os dados na variável user
 	err := json.NewDecoder(r.Body).Decode(&user)
@@ -35,7 +35,7 @@ func LoginUserHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // Função para simular uma requisição de login de usuário
-func LoginUsuario(user components.User) error {
+func LoginUsuario(user DataModel.User) error {
 	// Converte o objeto User em JSON.
 	body, err := json.Marshal(user)
 	if err != nil {
@@ -55,7 +55,7 @@ func LoginUsuario(user components.User) error {
 	rr := httptest.NewRecorder()
 
 	// Define o handler de login de usuário.
-	handler := http.HandlerFunc(components.LoginUser)
+	handler := http.HandlerFunc(DataModel.LoginUser)
 
 	// Chama o handler de login de usuário com a requisição simulada.
 	handler.ServeHTTP(rr, req)

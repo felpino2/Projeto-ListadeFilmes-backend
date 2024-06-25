@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	mongoURI = "mongodb+srv://felpino2:senhaDB@clusterfelpino.p7mxxkv.mongodb.net/?retryWrites=true&w=majority&appName=ClusterFelpino"
+	mongoURI = "mongodb+srv://livialemos:LMPRY@trabalhocaio.fay3v2j.mongodb.net/?retryWrites=true&w=majority&appName=TRABALHOCAIO"
 )
 
 var client *mongo.Client

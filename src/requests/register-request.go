@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"ps-backend-felipe-rodrigues/src/components"
+	"psbackllfa/src/DataModel"
 )
 
 type ErrorResponse struct {
@@ -15,7 +15,7 @@ type ErrorResponse struct {
 
 // Função para registrar o usuário diretamente através de uma chamada HTTP
 func RegisterUserHandler(w http.ResponseWriter, r *http.Request) {
-	var user components.User
+	var user DataModel.User
 
 	// Decodifica o corpo da requisição JSON e armazena os dados na variável user
 	err := json.NewDecoder(r.Body).Decode(&user)
@@ -39,7 +39,7 @@ func RegisterUserHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // Função para registrar o usuário (já fornecida)
-func RegistrarUsuario(user components.User) error {
+func RegistrarUsuario(user DataModel.User) error {
 	// Converte o objeto User em JSON.
 	body, err := json.Marshal(user)
 	if err != nil {
@@ -59,7 +59,7 @@ func RegistrarUsuario(user components.User) error {
 	rr := httptest.NewRecorder()
 
 	// Define o handler de registro de usuário.
-	handler := http.HandlerFunc(components.RegisterUser)
+	handler := http.HandlerFunc(DataModel.CreateUser)
 
 	// Chama o handler de registro de usuário com a requisição simulada.
 	handler.ServeHTTP(rr, req)

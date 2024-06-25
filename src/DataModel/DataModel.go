@@ -2,10 +2,12 @@ package DataModel
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"net/http"
+	"psbackllfa/src/database"
 	"time"
 )
 
@@ -24,9 +26,8 @@ type Rating struct {
 }
 
 type User struct {
-	Id_User primitive.ObjectID `bson:"_id,omitempty" json:"id_user"`
-	Nome    string             `bson:"nome" json:"nome"`
-	Senha   string             `bson:"senha" json:"senha"`
+	Nome  string `bson:"nome" json:"nome"`
+	Senha string `bson:"senha" json:"senha"`
 }
 
 type Lista struct {
@@ -37,48 +38,62 @@ type Lista struct {
 }
 
 // CreateUser cria um novo usuário com um nome e senha fornecidos e insere no MongoDB
-func CreateUser(client *mongo.Client, nome string, senha string) (User, error) {
-	// Gera um ObjectID para o novo usuário
-	id := primitive.NewObjectID()
+func CreateUser(w http.ResponseWriter, r *http.Request) {
+	var user User
 
-	// Cria o novo usuário
-	user := User{
-		Id_User: id,
-		Nome:    nome,
-		Senha:   senha,
-	}
-
-	// Obtém a coleção de usuários
-	collection := client.Database("userdb").Collection("users")
-
-	// Insere o novo usuário na coleção
-	_, err := collection.InsertOne(context.TODO(), user)
+	// Decodifica o corpo da requisição JSON e armazena os dados na variável user
+	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
-		return User{}, err
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
 	}
 
-	// Retorna o usuário criado
-	return user, nil
+	// Obtém uma referência para a coleção "users" no banco de dados "userdb"
+	collection := database.GetUserCollection()
+
+	// Insere o documento user na coleção "users"
+	_, err = collection.InsertOne(context.TODO(), user)
+	if err != nil {
+		http.Error(w, "Failed to create user", http.StatusInternalServerError)
+		return
+	}
+
+	// Define o status HTTP como 201(created)
+	w.WriteHeader(http.StatusCreated)
+
+	// Codifica a variável user em JSON e escreve na resposta HTTP
+	json.NewEncoder(w).Encode(user)
 }
 
 // LoginUser verifica as credenciais do usuário e retorna o usuário se for bem-sucedido
-func LoginUser(client *mongo.Client, nome string, senha string) (User, error) {
+func LoginUser(w http.ResponseWriter, r *http.Request) {
 	var user User
+	var foundUser User
 
-	// Obtém a coleção de usuários
-	collection := client.Database("userdb").Collection("users")
-
-	// Cria um filtro para verificar as credenciais
-	filter := bson.M{"nome": nome, "senha": senha}
-
-	// Procura pelo usuário no banco de dados
-	err := collection.FindOne(context.TODO(), filter).Decode(&user)
+	// Decodifica o corpo da requisição JSON e armazena os dados na variável user
+	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
-		return User{}, err
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
 	}
 
-	// Retorna o usuário encontrado
-	return user, nil
+	// Obtém uma referência para a coleção "users" no banco de dados "userdb"
+	collection := database.GetUserCollection()
+
+	// Busca o usuário no banco de dados pelo DisplayName e Password
+	filter := bson.M{"displayname": user.Nome, "password": user.Senha}
+	err = collection.FindOne(context.TODO(), filter).Decode(&foundUser)
+	if err == mongo.ErrNoDocuments {
+		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
+		return
+	} else if err != nil {
+		http.Error(w, "Failed to login user", http.StatusInternalServerError)
+		return
+	}
+
+	// Define o status HTTP como 200 (OK) e retorna o usuário encontrado como JSON
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(foundUser)
 }
 
 // CreateLista cria uma nova lista de filmes para um usuário específico
