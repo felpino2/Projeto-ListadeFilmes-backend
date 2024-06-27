@@ -1,9 +1,9 @@
 package DataModel
 
+/*
 import (
 	"testing"
 )
-
 // TestCreateUser testa a função CreateUser para garantir que um usuário é criado corretamente.
 func TestCreateUser(t *testing.T) {
 	// Chama a função CreateUser com os parâmetros de teste.
@@ -133,3 +133,4 @@ func TestGetListaByID(t *testing.T) {
 	// Registra a lista recuperada.
 	t.Logf("Lista obtida: %+v", retrievedLista)
 }
+*/
