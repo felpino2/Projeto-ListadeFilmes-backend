@@ -2,11 +2,14 @@ package requests
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"psbackllfa/src/DataModel"
+	"psbackllfa/src/database"
 )
 
 type ErrorResponse struct {
@@ -15,27 +18,30 @@ type ErrorResponse struct {
 
 // Função para registrar o usuário diretamente através de uma chamada HTTP
 func RegisterUserHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+		return
+	}
+
 	var user DataModel.User
-
-	// Decodifica o corpo da requisição JSON e armazena os dados na variável user
-	err := json.NewDecoder(r.Body).Decode(&user)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(ErrorResponse{Message: "Invalid request payload"})
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		log.Printf("Error decoding request body: %v", err)
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
 
-	// Chama a função RegistrarUsuario para processar o registro do usuário
-	err = RegistrarUsuario(user)
+	log.Printf("Received user: %v", user)
+
+	collection := database.Client.Database("TRABALHOCAIO").Collection("users")
+	_, err := collection.InsertOne(context.TODO(), user)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(ErrorResponse{Message: err.Error()})
+		log.Printf("Error inserting user into database: %v", err)
+		http.Error(w, "Failed to register user", http.StatusInternalServerError)
 		return
 	}
 
-	// Define o status HTTP como 201 (Created) e retorna o usuário registrado como JSON
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(user)
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("User registered successfully"))
 }
 
 // Função para registrar o usuário (já fornecida)

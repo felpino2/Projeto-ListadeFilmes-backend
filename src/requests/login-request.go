@@ -1,69 +1,54 @@
 package requests
 
 import (
-	"bytes"
+	"context"
 	"encoding/json"
-	"fmt"
+	"log"
 	"net/http"
-	"net/http/httptest"
 	"psbackllfa/src/DataModel"
+	"psbackllfa/src/database"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// Função para lidar com requisições de login de usuários
-func LoginUserHandler(w http.ResponseWriter, r *http.Request) {
-	var user DataModel.User
-
-	// Decodifica o corpo da requisição JSON e armazena os dados na variável user
-	err := json.NewDecoder(r.Body).Decode(&user)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(ErrorResponse{Message: "Invalid request payload"})
-		return
-	}
-
-	// Chama a função LoginUsuario para processar o login do usuário
-	err = LoginUsuario(user)
-	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(ErrorResponse{Message: err.Error()})
-		return
-	}
-
-	// Define o status HTTP como 200 (OK) e retorna o usuário logado como JSON
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(user)
+type LoginRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
-// Função para simular uma requisição de login de usuário
-func LoginUsuario(user DataModel.User) error {
-	// Converte o objeto User em JSON.
-	body, err := json.Marshal(user)
+func LoginUserHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var loginReq LoginRequest
+	if err := json.NewDecoder(r.Body).Decode(&loginReq); err != nil {
+		log.Printf("Error decoding request body: %v", err)
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	log.Printf("Trying to log in user: %v", loginReq)
+
+	collection := database.Client.Database("TRABALHOCAIO").Collection("users")
+	filter := bson.M{"nome": loginReq.Username, "senha": loginReq.Password}
+
+	var foundUser DataModel.User
+	err := collection.FindOne(context.TODO(), filter).Decode(&foundUser)
 	if err != nil {
-		return err
+		if err == mongo.ErrNoDocuments {
+			log.Printf("User not found or wrong password: %v", err)
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		} else {
+			log.Printf("Error finding user: %v", err)
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+		}
+		return
 	}
 
-	// Cria uma requisição HTTP POST simulada com os dados do usuário.
-	req, err := http.NewRequest("POST", "/login", bytes.NewBuffer(body))
-	if err != nil {
-		return err
-	}
-
-	// Define o cabeçalho Content-Type como application/json.
-	req.Header.Set("Content-Type", "application/json")
-
-	// Cria um ResponseRecorder para capturar a resposta da requisição.
-	rr := httptest.NewRecorder()
-
-	// Define o handler de login de usuário.
-	handler := http.HandlerFunc(DataModel.LoginUser)
-
-	// Chama o handler de login de usuário com a requisição simulada.
-	handler.ServeHTTP(rr, req)
-
-	// Verifica o status code
-	if status := rr.Code; status != http.StatusOK {
-		return fmt.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
-	}
-
-	return nil
+	log.Printf("User logged in successfully: %v", foundUser)
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Login successful"))
 }

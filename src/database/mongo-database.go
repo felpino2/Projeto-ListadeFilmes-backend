@@ -28,3 +28,12 @@ func ConectarMongo(uri string) (*mongo.Client, error) {
 func GetUserCollection() *mongo.Collection {
 	return Client.Database("DBuser").Collection("usuario")
 }
+
+func AuthenticateUser(username, password string) bool {
+	// Exemplo simples: autenticação com credenciais fixas
+	if username == "testuser" && password == "testpassword" {
+		return true
+	}
+	// Aqui você deve verificar o usuário e a senha no banco de dados
+	return false
+}

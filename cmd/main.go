@@ -22,6 +22,10 @@ func main() {
 
 	// Configura a rota para registro de usuários usando a função RegisterUserHandler
 	http.HandleFunc("/register", requests.RegisterUserHandler)
+	http.HandleFunc("/login", requests.LoginUserHandler)
+	http.HandleFunc("/create_lista", requests.CreateListaHandler)
+	http.HandleFunc("/lista_updater/id:", requests.InsertFilmeHandler)
+	http.HandleFunc("/update_rating", requests.UpdateRatingHandler)
 
 	log.Println("Servidor iniciado na porta 8080")
 	log.Fatal(http.ListenAndServe(":8080", corsHandler(http.DefaultServeMux)))
